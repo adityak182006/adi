@@ -1,0 +1,741 @@
+EXPT 1:
+
+#include<iostream>
+using namespace std;
+
+void read(int arr[], int n)
+{
+    for(int i=0;i<n;i++)
+    {
+        cout<<"enter the elements\n";
+        cin>>arr[i];
+    }
+}
+void display(int arr[], int n)
+{
+
+        cout<<"the elements are:\n";
+       for(int i=0;i<n;i++)
+       {
+           cout<<arr[i]<<"\n";
+       }
+    }
+int sort(int arr[],int n)
+{
+    for (int i=0;i<n;i++)
+    {
+        for (int j=0;j<n-1;j++)
+        {if(arr[j]>arr[j+1])
+        {
+            swap(arr[j],arr[j+1]);
+        }
+        }
+    }
+        cout<<"\n the sorted elements are:\n";
+        for (int i=0;i<n;i++)
+        {
+            cout<<arr[i]<<"\n";
+        }
+        return 0;
+}
+
+void swap(int &x, int &y)
+{
+    int temp;
+    temp=x;
+    x=y;
+    y=temp;
+}
+
+int main()
+{
+    int n,arr[100];
+    cout<<"Enter the no. of elements:\n";
+    cin>>n;
+    read(arr,n);
+    display(arr,n);
+    sort(arr,n);
+}
+
+ 
+
+ 
+
+ 
+
+ 
+
+EXPT 2:
+
+#include <iostream>
+using namespace std;
+
+float CalcCost(float dist,float costpkm)
+{ return dist*costpkm;
+}
+int CalcCost(int flight,int rate)
+{ return flight*rate;
+}
+
+int main() {
+    int choice;
+    cout<<"Travel agency system:\n";
+    cout<<"1. dist based:\n";
+    cout<<"2, flight based:\n";
+    cout<<"enter your choice:";
+    cin>> choice;
+   
+    switch(choice){
+        case 1:
+        {
+            float dist,costpkm;
+            cout<<"enter dist:";
+            cin>>dist;
+            cout<<"\n enter cost Pkm:";
+            cin>>costpkm;
+            cout<<"Total Travel Cost"<<CalcCost(dist,costpkm)<<endl;
+            break;
+        }
+        case 2:
+        {
+            int flight,rate;
+            cout<<"enter no. of flight:";
+            cin>>flight;
+            cout<<"\n enter rate:";
+            cin>>rate;
+            cout<<"Total Travel Cost:"<<CalcCost(flight,rate)<<endl;
+            break;
+        }
+        default :
+        cout<<"invalid choice!";
+    }
+   
+    return 0;
+}
+
+ 
+
+ 
+
+ 
+
+ 
+
+EXPT 3:
+
+#include <iostream>
+using namespace std;
+
+const float pi=3.14;
+
+class Complex{
+    float real;
+    float img;
+   
+public:
+void set_data(float r,float i)
+{
+    r=real;
+    i=img;
+}
+void add(Complex res, Complex ind)
+{
+    real=res.real+ind.real;
+    img=res.img+ind.img;
+    display();
+}
+void subtract(Complex res, Complex cap)
+{
+    real=res.real-cap.real;
+    img=res.img-cap.img;
+    display();
+}
+void display(){
+    cout<<"Complex no. is:\n";
+    if(img<0)
+    cout<<real<<img<<"i"<<endl;
+    else
+    cout<<real<<"+"<<img<<"i"<<endl;
+}
+};
+int main() {
+    float r,c,l,f,xl,xc;
+    cout<<"enter r,c,l,f:\n";
+    cin>>r>>c>>l>>f;
+   
+    xl=2*pi*f*c;
+    xc=1/(2*pi*f*c);
+   
+    Complex R,C,L,ZC,ZL;
+   
+    R.set_data(r,0);
+    C.set_data(0,xc);
+    L.set_data(0,xl);
+   
+    cout<<"ZC=";
+    ZC.subtract(R,C);
+   
+    cout<<"ZL=";
+    ZL.add(R,L);
+
+    return 0;
+}
+
+ 
+
+ 
+
+ 
+
+ 
+
+EXPT 4:
+
+#include <iostream>
+#include <string.h>
+using namespace std;
+class String { char
+*str; public:
+String(const char *s)
+{ int len = strlen(s);
+str = new char[len+1];
+strcpy(str, s);
+}
+String()
+{ str = new
+char[25];
+}
+~String()
+{
+delete[] str;
+}
+void getString(char *s)
+{
+strcpy(str, s);
+}
+void display()
+
+{ cout << str <<
+endl;
+} }; int main() { char
+ch[25]; String s1("abc");
+s1.display(); String s2;
+cout << "Enter a string: ";
+cin >> ch;
+s2.getString(ch);
+s2.display();
+}
+
+ 
+
+ 
+
+ 
+
+ 
+
+EXPT 5:
+
+#include <iostream>
+
+using namespace std;
+
+ 
+
+class PlateDispenser {
+
+private:
+
+    int plates[100];  
+
+    int top;          
+
+    int capacity;
+
+ 
+
+public:
+
+
+
+    PlateDispenser(int size) {
+
+        capacity = size;
+
+        top = -1;           cout << "Plate Dispenser Initialized with capacity "
+
+             << capacity << endl;
+
+    }
+
+    void addPlate(int plateNumber) {
+
+        if (top == capacity - 1) {
+
+            cout << "Dispenser is FULL! Cannot add more plates.\n";
+
+        } else {
+
+            plates[++top] = plateNumber;
+
+            cout << "Plate " << plateNumber
+
+                 << " added to dispenser.\n";
+
+        }
+
+    }
+
+    void takePlate() {
+
+        if (top == -1) {
+
+            cout << "No plates available!\n";
+
+        } else {
+
+            cout << "Plate " << plates[top]
+
+                 << " taken by customer.\n";
+
+            top--;
+
+        }
+
+    }
+
+ 
+
+    void plateCount() {
+
+        cout << "Total plates in dispenser: "
+
+             << (top + 1) << endl;
+
+    }
+
+    void displayPlates() {
+
+        if (top == -1) {
+
+            cout << "Dispenser is empty.\n";
+
+        } else {
+
+            cout << "Plates in dispenser (top to bottom):\n";
+
+            for (int i = top; i >= 0; i--) {
+
+                cout << plates[i] << endl;
+
+            }
+
+        }
+
+    }
+
+ PlateDispenser() {
+
+        cout << "Plate Dispenser system shutting down.\n";
+
+    }
+
+};
+
+int main() {
+
+PlateDispenser dispenser(5);int choice, plateNumber;
+
+do {
+
+        cout << "\n---- Cafeteria Plate Dispenser ----\n";
+
+        cout << "1. Add Clean Plate\n";
+
+        cout << "2. Take Plate\n";
+
+        cout << "3. Check Plate Count\n";
+
+        cout << "4. Display Plates\n";
+
+        cout << "5. Exit\n";
+
+        cout << "Enter choice: ";
+
+        cin >> choice;
+
+ 
+
+    switch (choice) {
+
+ 
+
+            case 1:
+
+                cout << "Enter Plate Number: ";
+
+                cin >> plateNumber;
+
+                dispenser.addPlate(plateNumber);
+
+                break;
+
+ 
+
+            case 2:
+
+                dispenser.takePlate();
+
+                break;
+
+ 
+
+            case 3:
+
+                dispenser.plateCount();
+
+                break;
+
+ 
+
+            case 4:
+
+                dispenser.displayPlates();
+
+                break;
+
+ 
+
+            case 5:
+
+                cout << "Exiting system...\n";
+
+                break;
+
+ 
+
+            default:
+
+                cout << "Invalid choice!\n";
+
+        }
+
+ 
+
+    } while (choice != 5);
+
+ 
+
+    return 0;
+
+}
+
+
+
+EXPT 6:
+
+#include<iostream>
+using namespace std;
+
+class Vector {
+int x,y,z;
+public:
+Vector(int x=0 , int y=0 , int z=0) {
+this->x=x;
+this->y=y;
+this->z = z;
+}
+Vector operator +(Vector v) {
+return Vector(x+v.x , y+v.y , z+v.z);
+}
+Vector operator -(Vector v) {
+return Vector(x-v.x , y-v.y , z-v.z);
+}
+float operator *(Vector v) {
+return (x*v.x + y*v.y + z*v.z);
+
+}
+Vector operator %(Vector v) {
+return Vector(y*v.z - z*v.y , z*v.x - x*v.z , x*v.y-y*v.x );
+}
+bool operator ==(Vector v) {
+return (x==v.x && y==v.y && z==v.z);
+}
+bool operator !=(Vector v) {
+return !(*this == v);
+}
+void display() {
+cout << "(" << x << ", " << y << ", " << z << ")" << endl;
+}
+};
+int main() {
+Vector v1(1,2,3);
+Vector v2(4,5,6);
+v1.display();
+v2.display();
+Vector v3 = v1+v2;
+v3.display();
+Vector v4 = v1 - v2;
+v4.display();
+float dot = v1 * v2;
+cout << "v1 . v2 = " << dot << endl;
+Vector cross = v1 % v2;
+cross.display();
+if(v1 == v2)
+
+cout << "v1 and v2 are equal\n";
+else
+cout << "v1 and v2 are NOT equal\n";
+
+return 0;
+}
+
+
+
+ 
+
+ 
+
+ 
+
+EXPT 7:
+
+#include <iostream>
+using namespace std;
+class SmartAppliance {
+private: string
+name; bool status;
+public:
+SmartAppliance(string n) {
+name = n; status =
+false;
+}
+void operator!() {
+if (status == true)
+status = false;
+else status =
+true;
+}
+void display() { cout << "Appliance Name: "
+<< name << endl;
+if (status == true) cout
+<< "Status: ON" << endl;
+else cout << "Status: OFF" <<
+endl; cout << "------------------------" <<
+endl;
+}
+};
+
+int main() {
+SmartAppliance appliance("Air Conditioner");
+cout << "Initial State:" << endl;
+appliance.display(); !appliance; cout <<
+"After Toggling:" << endl; appliance.display();
+return 0;
+}
+
+
+
+ 
+
+ 
+
+ 
+
+EXPT 8:
+
+#include<iostream>
+using namespace std;
+
+class Date{
+int d , m , y;
+public:
+void setDate(int d , int m , int y) {
+this->d = d;
+this->m = m;
+this->y = y;
+}
+void displayDate() {
+cout<<d<<"/"<<m<<"/"<<y<<endl;
+}
+};
+template <class T>
+class DataLogger {
+T data;
+Date timeStamp;
+
+public:
+void accept() {
+int d , m , y;
+cout<<"enter data\n";
+cin>>data;
+cout<<"enter date\n";
+cin>>d>>m>>y;
+timeStamp.setDate(d,m,y);
+}
+void display(){
+cout<<"data is : " <<data<<endl;
+cout<<"time stamp is :\n";
+timeStamp.displayDate();
+cout<<endl;
+}
+};
+template <class T>
+void showData(T value) {
+cout<<"sensor value is :" <<value<<endl;
+}
+
+int main() {
+DataLogger<int> d1;
+d1.accept();
+d1.display();
+
+DataLogger<float> d2;
+
+d2.accept();
+d2.display();
+
+showData(100);
+showData(45.67);
+return 0;
+}
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+EXPT 9:
+
+#include<iostream> using
+namespace std; class
+Product {
+protected:
+string name; int price;
+string description;
+public:
+Product(string name , int price , string description) {
+this->name = name;
+this->price = price; this-
+>description = description;
+}
+void displayProduct() {
+cout << "Product Name: " << name << endl;
+cout << "Price: " << price << endl; cout <<
+"Description: " << description << endl;
+}
+};
+class Attributes {
+protected:
+string size;
+string color;
+string brand;
+public:
+Attributes(string s, string c, string b) {
+
+size = s;
+color = c;
+brand = b;
+}
+void displayAttributes() { cout <<
+"Size: " << size << endl; cout <<
+"Color: " << color << endl; cout <<
+"Brand: " << brand << endl;
+}
+};
+class Clothing : public Product, public Attributes { public:
+Clothing(string name, int price, string description,string size, string color, string brand)
+: Product(name, price, description), Attributes(size, color, brand)
+{} void displayClothing() { cout << "---- Clothing Details ----" << endl;
+displayProduct(); displayAttributes();
+}
+};
+int main() {
+Clothing item1("denim", 5000, "stylish clotthing","M", "Black", "zudio");
+item1.displayClothing(); return 0;
+}
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+EXPT 10:
+
+<iostream> using
+namespace std; class
+PaymentMethod { public:
+virtual void processPayment(double amount) { cout <<
+"Processing generic payment of Rs. " << amount << endl;
+}
+virtual ~PaymentMethod() {}
+};
+class CreditCard : public PaymentMethod { public:
+void processPayment(double amount) override { string
+cardNumber; cout << "\nEnter Credit Card Number: "; cin >>
+cardNumber; cout << "Processing Credit Card payment of Rs. " <<
+amount << endl; cout << "Verifying credit card details..." << endl;
+cout << "Payment successful via Credit Card!\n";
+}
+};
+class DebitCard : public PaymentMethod { public:
+void processPayment(double amount) override {
+string pin; cout << "\nEnter
+Debit Card PIN: "; cin >> pin;
+
+cout << "Processing Debit Card payment of Rs. " << amount << endl;
+cout << "Checking bank balance..." << endl; cout << "Payment
+successful via Debit Card!\n";
+}
+
+};
+class PayPal : public PaymentMethod { public:
+void processPayment(double amount) override {
+string email; cout << "\nEnter PayPal Email: "; cin >>
+email; cout << "Processing PayPal payment of Rs. " << amount
+<< endl; cout << "Logging into PayPal account..." << endl;
+cout << "Payment successful via PayPal!\n";
+}
+};
+int main() { int
+choice; double
+amount;
+PaymentMethod* payment = NULL;
+do {
+cout << "\n====== Online Payment System ======\n";
+cout << "1. Credit Card\n"; cout << "2. Debit Card\n";
+cout << "3. PayPal\n"; cout << "4. Exit\n"; cout <<
+"Enter your choice: "; cin >> choice; if (choice >= 1
+&& choice <= 3) { cout << "Enter amount to pay: ";
+cin >> amount; if
+(choice == 1) payment = new
+CreditCard(); else if (choice ==
+2) payment = new
+DebitCard(); else if (choice ==
+3) payment = new PayPal();
+
+payment->processPayment(amount);
+
+delete payment;
+}
+
+else if (choice == 4) { cout
+<< "Exiting program...\n";
+}
+else {
+cout << "Invalid choice! Please try again.\n";
+}
+
+} while (choice != 4);
+return 0;
+}

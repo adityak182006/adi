@@ -1,0 +1,1110 @@
+1.Write a program to simulate CPU Scheduling Algorithms- FCFS, SJF, Priority and Round Robin. CO1
+
+//FCFS
+
+#include <iostream>
+using namespace std;
+
+int main() {
+    int n;
+    cout << "Enter number of processes: ";
+    cin >> n;
+
+    int pid[n], at[n], bt[n], ct[n], tt[n], wt[n];
+    int temp;
+
+    for (int i = 0; i < n; i++) {
+        pid[i] = i + 1;
+        cout << "Enter AT and BT of P" << pid[i] << ": ";
+        cin >> at[i] >> bt[i];
+    }
+
+    // Sorting by Arrival Time using temp
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = i + 1; j < n; j++) {
+            if (at[i] > at[j]) {
+                temp = at[i];
+                at[i] = at[j];
+                at[j] = temp;
+
+                temp = bt[i];
+                bt[i] = bt[j];
+                bt[j] = temp;
+
+                temp = pid[i];
+                pid[i] = pid[j];
+                pid[j] = temp;
+            }
+        }
+    }
+
+    int time = 0;
+
+    for (int i = 0; i < n; i++) {
+        if (time < at[i])
+            time = at[i];
+
+        ct[i] = time + bt[i];
+        tt[i] = ct[i] - at[i];   // Turnaround Time
+        wt[i] = tt[i] - bt[i];   // Waiting Time
+
+        time = ct[i];
+    }
+
+    cout << "\nP\tAT\tBT\tTT\tWT\n";
+    for (int i = 0; i < n; i++) {
+        cout << "P" << pid[i] << "\t"
+             << at[i] << "\t"
+             << bt[i] << "\t"
+             << tt[i] << "\t"
+             << wt[i] << endl;
+    }
+
+    return 0;
+}
+
+//SJF
+
+#include <iostream>
+using namespace std;
+
+int main() {
+    int n;
+    cout << "Enter number of processes: ";
+    cin >> n;
+
+    int at[n], bt[n], rt[n], ct[n], tat[n], wt[n];
+
+    for (int i = 0; i < n; i++) {
+        cout << "Enter Arrival Time and Burst Time of P" << i + 1 << ": ";
+        cin >> at[i] >> bt[i];
+        rt[i] = bt[i];   // remaining time
+    }
+
+    int time = 0, completed = 0, min, shortest;
+    bool found;
+
+    while (completed < n) {
+        min = 9999;
+        found = false;
+
+        for (int i = 0; i < n; i++) {
+            if (at[i] <= time && rt[i] > 0 && rt[i] < min) {
+                min = rt[i];
+                shortest = i;
+                found = true;
+            }
+        }
+
+        if (!found) {
+            time++;   // CPU idle
+            continue;
+        }
+
+        // Execute shortest job for 1 unit time
+        rt[shortest]--;
+        time++;
+
+        if (rt[shortest] == 0) {
+            completed++;
+            ct[shortest] = time;
+            tat[shortest] = ct[shortest] - at[shortest];
+            wt[shortest] = tat[shortest] - bt[shortest];
+        }
+    }
+
+    cout << "\nP\tAT\tBT\tCT\tTAT\tWT\n";
+    for (int i = 0; i < n; i++) {
+        cout << "P" << i + 1 << "\t"
+             << at[i] << "\t"
+             << bt[i] << "\t"
+             << ct[i] << "\t"
+             << tat[i] << "\t"
+             << wt[i] << endl;
+    }
+
+    return 0;
+}
+
+//Priority
+
+#include <iostream>
+using namespace std;
+
+int main() {
+    int n;
+    cout << "Enter number of processes: ";
+    cin >> n;
+
+    int pid[n], bt[n], pr[n], ct[n], tat[n], wt[n];
+    int temp;
+
+    for (int i = 0; i < n; i++) {
+        pid[i] = i + 1;
+        cout << "Enter Burst Time and Priority of P" << pid[i] << ": ";
+        cin >> bt[i] >> pr[i];
+    }
+
+    // Sort according to Priority (lower value = higher priority)
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = i + 1; j < n; j++) {
+            if (pr[i] > pr[j]) {
+                temp = pr[i];
+                pr[i] = pr[j];
+                pr[j] = temp;
+
+                temp = bt[i];
+                bt[i] = bt[j];
+                bt[j] = temp;
+
+                temp = pid[i];
+                pid[i] = pid[j];
+                pid[j] = temp;
+            }
+        }
+    }
+
+    ct[0] = bt[0];
+    for (int i = 1; i < n; i++) {
+        ct[i] = ct[i - 1] + bt[i];
+    }
+
+    for (int i = 0; i < n; i++) {
+        tat[i] = ct[i];           // since AT = 0
+        wt[i] = tat[i] - bt[i];
+    }
+
+    cout << "\nP\tBT\tPR\tCT\tTAT\tWT\n";
+    for (int i = 0; i < n; i++) {
+        cout << "P" << pid[i] << "\t"
+             << bt[i] << "\t"
+             << pr[i] << "\t"
+             << ct[i] << "\t"
+             << tat[i] << "\t"
+             << wt[i] << endl;
+    }
+
+    return 0;
+}
+
+//RR
+
+#include <iostream>
+using namespace std;
+
+int main() {
+    int n, tq;
+    cout << "Enter number of processes: ";
+    cin >> n;
+
+    int bt[n], rt[n], wt[n], tat[n];
+    
+    for (int i = 0; i < n; i++) {
+        cout << "Enter Burst Time of P" << i + 1 << ": ";
+        cin >> bt[i];
+        rt[i] = bt[i];   // remaining time
+        wt[i] = 0;
+    }
+
+    cout << "Enter Time Quantum: ";
+    cin >> tq;
+
+    int time = 0;
+    bool done;
+
+    while (true) {
+        done = true;
+
+        for (int i = 0; i < n; i++) {
+            if (rt[i] > 0) {
+                done = false;
+
+                if (rt[i] > tq) {
+                    time += tq;
+                    rt[i] -= tq;
+                } else {
+                    time += rt[i];
+                    wt[i] = time - bt[i];
+                    rt[i] = 0;
+                }
+            }
+        }
+
+        if (done)
+            break;
+    }
+
+    for (int i = 0; i < n; i++) {
+        tat[i] = wt[i] + bt[i];
+    }
+
+    cout << "\nP\tBT\tWT\tTAT\n";
+    for (int i = 0; i < n; i++) {
+        cout << "P" << i + 1 << "\t"
+             << bt[i] << "\t"
+             << wt[i] << "\t"
+             << tat[i] << endl;
+    }
+
+    return 0;
+}
+
+2.
+Write a script in Bash, Csh, and Ksh that
+1) Print system information, date, and user information.
+2) Accept user input, perform calculations, and use string
+manipulation. CO1
+
+//KSH
+
+#!/bin/ksh
+
+echo "----- SYSTEM INFORMATION -----"
+echo "User Name     : $USER"
+echo "Home Directory: $HOME"
+echo "Current Shell : $SHELL"
+echo "Date & Time   : $(date)"
+echo "System Name   : $(uname -a)"
+
+echo ""
+echo "----- CALCULATIONS -----"
+print "Enter first number: \c"
+read a
+print "Enter second number: \c"
+read b
+
+print "Addition       : $((a + b))"
+print "Subtraction    : $((a - b))"
+print "Multiplication : $((a * b))"
+print "Division       : $((a / b))"
+
+echo ""
+echo "----- STRING MANIPULATION -----"
+print "Enter a string: \c"
+read str
+
+print "String entered : $str"
+print "Length of str  : ${#str}"
+
+//CSH
+
+#!/bin/csh
+
+echo "----- SYSTEM INFORMATION -----"
+echo "User Name     : $USER"
+echo "Home Directory: $HOME"
+echo "Current Shell : $SHELL"
+echo "Date & Time   : `date`"
+echo "System Name   : `uname -a`"
+
+echo ""
+echo "----- CALCULATIONS -----"
+echo -n "Enter first number: "
+set a = $<
+echo -n "Enter second number: "
+set b = $<
+
+@ add = $a + $b
+@ sub = $a - $b
+@ mul = $a * $b
+@ div = $a / $b
+
+echo "Addition       : $add"
+echo "Subtraction    : $sub"
+echo "Multiplication : $mul"
+echo "Division       : $div"
+
+echo ""
+echo "----- STRING MANIPULATION -----"
+echo -n "Enter a string: "
+set str = $<
+
+echo "String entered : $str"
+echo "Length of str  : `echo $str | wc -c`"
+
+//BASH
+
+#!/bin/bash
+
+echo "----- SYSTEM INFORMATION -----"
+echo "User Name     : $USER"
+echo "Home Directory: $HOME"
+echo "Current Shell : $SHELL"
+echo "Date & Time   : $(date)"
+echo "System Name   : $(uname -a)"
+
+echo ""
+echo "----- CALCULATIONS -----"
+read -p "Enter first number: " a
+read -p "Enter second number: " b
+
+echo "Addition       : $((a + b))"
+echo "Subtraction    : $((a - b))"
+echo "Multiplication : $((a * b))"
+echo "Division       : $((a / b))"
+
+echo ""
+echo "----- STRING MANIPULATION -----"
+read -p "Enter a string: " str
+
+echo "Uppercase      : ${str^^}"
+echo "Lowercase      : ${str,,}"
+echo "Length of str  : ${#str}"
+
+
+3. Implement UNIX system calls like ps, fork, join, exec family, and wait for
+process management (use shell script/ Java/ C programming). CO1
+
+//FORK
+
+#include <stdio.h>
+#include <unistd.h>
+
+int main() {
+    pid_t pid;
+
+    pid = fork();   // Create a new process
+
+    if (pid < 0) {
+        // Error occurred
+        printf("Fork failed\n");
+    }
+    else if (pid == 0) {
+        // Child process
+        printf("Child Process\n");
+        printf("Child PID: %d\n", getpid());
+        printf("Parent PID: %d\n", getppid());
+    }
+    else {
+        // Parent process
+        printf("Parent Process\n");
+        printf("Parent PID: %d\n", getpid());
+        printf("Child PID: %d\n", pid);
+    }
+
+    return 0;
+}
+
+//FORK AND WAIT
+
+#include <stdio.h>
+#include <unistd.h>
+#include <sys/wait.h>
+#include <stdlib.h>
+
+int main() {
+    pid_t pid;
+    int status;
+
+    pid = fork();   // Create child process
+
+    if (pid < 0) {
+        // Fork failed
+        perror("Fork failed");
+        exit(1);
+    }
+    else if (pid == 0) {
+        // Child process
+        printf("Child Process\n");
+        printf("Child PID: %d\n", getpid());
+        printf("Parent PID: %d\n", getppid());
+
+        // Simulate some work
+        sleep(2);
+
+        printf("Child process exiting\n");
+        exit(0);
+    }
+    else {
+        // Parent process
+        printf("Parent Process\n");
+        printf("Parent PID: %d\n", getpid());
+
+        // Wait for child to finish
+        wait(&status);
+
+        printf("Parent resumed after child termination\n");
+        printf("Parent process exiting\n");
+    }
+
+    return 0;
+}
+
+//EXEC
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+
+int main()
+{
+    pid_t pid;
+
+    pid = fork();   // Create child process
+
+    if (pid < 0)
+    {
+        printf("Fork failed\n");
+        exit(1);
+    }
+    else if (pid == 0)
+    {
+        // Child process
+        printf("Child process (PID: %d)\n", getpid());
+        printf("Executing ls command using exec...\n");
+
+        execl("/bin/ls", "ls", "-l", NULL);
+
+        // If exec fails
+        perror("exec failed");
+        exit(1);
+    }
+    else
+    {
+        // Parent process
+        wait(NULL);   // Wait for child to complete
+        printf("Parent process (PID: %d)\n", getpid());
+        printf("Child execution completed\n");
+    }
+
+    return 0;
+}
+
+4.
+Write a program to implement Reader-writer problem using mutex/
+semaphore. CO2
+
+#include <iostream>
+#include <thread>
+#include <mutex>
+#include <vector>
+#include <chrono>
+
+using namespace std;
+
+mutex mtx;      // protects readCount
+mutex wrt;      // writer lock
+int readCount = 0;
+
+// Reader function
+void reader(int id)
+{
+    // Entry section
+    mtx.lock();
+    readCount++;
+    if (readCount == 1)
+        wrt.lock();      // first reader blocks writer
+    mtx.unlock();
+
+    // Critical section (Reading)
+    cout << "Reader " << id << " is reading\n";
+    this_thread::sleep_for(chrono::seconds(1));
+
+    // Exit section
+    mtx.lock();
+    readCount--;
+    if (readCount == 0)
+        wrt.unlock();    // last reader allows writer
+    mtx.unlock();
+}
+
+// Writer function
+void writer(int id)
+{
+    wrt.lock();
+
+    // Critical section (Writing)
+    cout << "Writer " << id << " is writing\n";
+    this_thread::sleep_for(chrono::seconds(2));
+
+    wrt.unlock();
+}
+
+int main()
+{
+    int numReaders = 5;   // change as needed
+    int numWriters = 3;   // change as needed
+
+    vector<thread> r;
+    vector<thread> w;
+
+    // Create reader threads using loop
+    for (int i = 1; i <= numReaders; i++)
+    {
+        r.push_back(thread(reader, i));
+    }
+
+    // Create writer threads using loop
+    for (int i = 1; i <= numWriters; i++)
+    {
+        w.push_back(thread(writer, i));
+    }
+
+    // Join reader threads
+    for (int i = 0; i < numReaders; i++)
+    {
+        r[i].join();
+    }
+
+    // Join writer threads
+    for (int i = 0; i < numWriters; i++)
+    {
+        w[i].join();
+    }
+
+    return 0;
+}
+
+5. Write a program to implement producer-consumer problem using multi-
+threading concept. CO2
+
+include <iostream>
+#include <thread>
+#include <mutex>
+#include <condition_variable>
+#include <queue>
+
+using namespace std;
+
+const int BUFFER_SIZE = 5;
+queue<int> buffer;
+
+mutex mtx;
+condition_variable cv;
+
+void producer() {
+    for (int i = 1; i <= 10; i++) {
+        unique_lock<mutex> lock(mtx);
+
+        // Wait if buffer is full
+        cv.wait(lock, [] { return buffer.size() < BUFFER_SIZE; });
+
+        buffer.push(i);
+        cout << "Produced: " << i << endl;
+
+        lock.unlock();
+        cv.notify_all();
+    }
+}
+
+void consumer() {
+    for (int i = 1; i <= 10; i++) {
+        unique_lock<mutex> lock(mtx);
+
+        // Wait if buffer is empty
+        cv.wait(lock, [] { return !buffer.empty(); });
+
+        int item = buffer.front();
+        buffer.pop();
+        cout << "Consumed: " << item << endl;
+
+        lock.unlock();
+        cv.notify_all();
+    }
+}
+
+int main() {
+    thread t1(producer);
+    thread t2(consumer);
+
+    t1.join();
+    t2.join();
+
+    return 0;
+}
+
+6. Write a program to implement Banker’s Algorithm for deadlock avoidance.
+
+#include <iostream>
+using namespace std;
+
+int main()
+{
+    int n, m;   // n = number of processes, m = number of resources
+
+    cout << "Enter number of processes: ";
+    cin >> n;
+
+    cout << "Enter number of resource types: ";
+    cin >> m;
+
+    int alloc[n][m], max[n][m], avail[m];
+    int need[n][m];
+    bool finish[n];
+    int safeSeq[n];
+
+    // Input Allocation Matrix
+    cout << "\nEnter Allocation Matrix:\n";
+    for(int i = 0; i < n; i++)
+        for(int j = 0; j < m; j++)
+            cin >> alloc[i][j];
+
+    // Input Maximum Matrix
+    cout << "\nEnter Maximum Matrix:\n";
+    for(int i = 0; i < n; i++)
+        for(int j = 0; j < m; j++)
+            cin >> max[i][j];
+
+    // Input Available Resources
+    cout << "\nEnter Available Resources:\n";
+    for(int j = 0; j < m; j++)
+        cin >> avail[j];
+
+    // Calculate Need Matrix = Max - Allocation
+    for(int i = 0; i < n; i++)
+        for(int j = 0; j < m; j++)
+            need[i][j] = max[i][j] - alloc[i][j];
+
+    // Initialize finish array
+    for(int i = 0; i < n; i++)
+        finish[i] = false;
+
+    int count = 0;
+
+    while(count < n)
+    {
+        bool found = false;
+
+        for(int i = 0; i < n; i++)
+        {
+            if(finish[i] == false)
+            {
+                int j;
+                for(j = 0; j < m; j++)
+                {
+                    if(need[i][j] > avail[j])
+                        break;
+                }
+
+                if(j == m)  // If all resources satisfied
+                {
+                    for(int k = 0; k < m; k++)
+                        avail[k] += alloc[i][k];
+
+                    safeSeq[count++] = i;
+                    finish[i] = true;
+                    found = true;
+                }
+            }
+        }
+
+        if(found == false)
+        {
+            cout << "\nSystem is NOT in Safe State (Deadlock Possible)\n";
+            return 0;
+        }
+    }
+
+    cout << "\nSystem is in Safe State.\nSafe Sequence is: ";
+    for(int i = 0; i < n; i++)
+        cout << "P" << safeSeq[i] << " ";
+
+    cout << endl;
+
+    return 0;
+}
+
+7. Write a program to simulate memory placement strategies-best fit, first fit,
+next fit and worst fit.
+
+//BEST FIT
+
+#include <iostream>
+using namespace std;
+
+int main() {
+    int nb, np;
+
+    cout << "Enter number of memory blocks: ";
+    cin >> nb;
+
+    int blockSize[nb];
+    cout << "Enter sizes of memory blocks:\n";
+    for (int i = 0; i < nb; i++) {
+        cin >> blockSize[i];
+    }
+
+    cout << "Enter number of processes: ";
+    cin >> np;
+
+    int processSize[np];
+    cout << "Enter sizes of processes:\n";
+    for (int i = 0; i < np; i++) {
+        cin >> processSize[i];
+    }
+
+    int allocation[np];
+    for (int i = 0; i < np; i++)
+        allocation[i] = -1;
+
+    // Best Fit Allocation
+    for (int i = 0; i < np; i++) {
+        int bestIdx = -1;
+
+        for (int j = 0; j < nb; j++) {
+            if (blockSize[j] >= processSize[i]) {
+                if (bestIdx == -1 || blockSize[j] < blockSize[bestIdx]) {
+                    bestIdx = j;
+                }
+            }
+        }
+
+        if (bestIdx != -1) {
+            allocation[i] = bestIdx;
+            blockSize[bestIdx] -= processSize[i];
+        }
+    }
+
+    // Output
+    cout << "\nProcess No.\tProcess Size\tBlock No.\n";
+    for (int i = 0; i < np; i++) {
+        cout << i + 1 << "\t\t" << processSize[i] << "\t\t";
+        if (allocation[i] != -1)
+            cout << allocation[i] + 1;
+        else
+            cout << "Not Allocated";
+        cout << endl;
+    }
+
+    return 0;
+}
+
+//WROST FIT
+
+#include <iostream>
+using namespace std;
+
+int main() {
+    int nb, np;
+
+    cout << "Enter number of memory blocks: ";
+    cin >> nb;
+
+    int blockSize[nb];
+    cout << "Enter sizes of memory blocks:\n";
+    for (int i = 0; i < nb; i++) {
+        cin >> blockSize[i];
+    }
+
+    cout << "Enter number of processes: ";
+    cin >> np;
+
+    int processSize[np];
+    cout << "Enter sizes of processes:\n";
+    for (int i = 0; i < np; i++) {
+        cin >> processSize[i];
+    }
+
+    int allocation[np];
+    for (int i = 0; i < np; i++)
+        allocation[i] = -1;
+
+    // Worst Fit Allocation
+    for (int i = 0; i < np; i++) {
+        int worstIdx = -1;
+
+        for (int j = 0; j < nb; j++) {
+            if (blockSize[j] >= processSize[i]) {
+                if (worstIdx == -1 || blockSize[j] > blockSize[worstIdx]) {
+                    worstIdx = j;
+                }
+            }
+        }
+
+        if (worstIdx != -1) {
+            allocation[i] = worstIdx;
+            blockSize[worstIdx] -= processSize[i];
+        }
+    }
+
+    // Output
+    cout << "\nProcess No.\tProcess Size\tBlock No.\n";
+    for (int i = 0; i < np; i++) {
+        cout << i + 1 << "\t\t" << processSize[i] << "\t\t";
+        if (allocation[i] != -1)
+            cout << allocation[i] + 1;
+        else
+            cout << "Not Allocated";
+        cout << endl;
+    }
+
+    return 0;
+}
+
+//NEXT FIT
+
+#include <iostream>
+using namespace std;
+
+int main() {
+    int nb, np;
+
+    cout << "Enter number of memory blocks: ";
+    cin >> nb;
+
+    int blockSize[nb];
+    cout << "Enter sizes of memory blocks:\n";
+    for (int i = 0; i < nb; i++) {
+        cin >> blockSize[i];
+    }
+
+    cout << "Enter number of processes: ";
+    cin >> np;
+
+    int processSize[np];
+    cout << "Enter sizes of processes:\n";
+    for (int i = 0; i < np; i++) {
+        cin >> processSize[i];
+    }
+
+    int allocation[np];
+    for (int i = 0; i < np; i++)
+        allocation[i] = -1;
+
+    int last_alloc = 0; // pointer to track last allocation
+
+    // Next Fit Allocation
+    for (int i = 0; i < np; i++) {
+        int count = 0;
+
+        while (count < nb) {
+            if (blockSize[last_alloc] >= processSize[i]) {
+                allocation[i] = last_alloc;
+                blockSize[last_alloc] -= processSize[i];
+                break;
+            }
+
+            last_alloc = (last_alloc + 1) % nb;
+            count++;
+        }
+    }
+
+    // Output
+    cout << "\nProcess No.\tProcess Size\tBlock No.\n";
+    for (int i = 0; i < np; i++) {
+        cout << i + 1 << "\t\t" << processSize[i] << "\t\t";
+        if (allocation[i] != -1)
+            cout << allocation[i] + 1;
+        else
+            cout << "Not Allocated";
+        cout << endl;
+    }
+
+    return 0;
+}
+
+//FIRST FIT
+
+#include <iostream>
+using namespace std;
+
+int main() {
+    int nb, np;
+
+    cout << "Enter number of memory blocks: ";
+    cin >> nb;
+
+    int blockSize[nb];
+    cout << "Enter sizes of memory blocks:\n";
+    for (int i = 0; i < nb; i++) {
+        cin >> blockSize[i];
+    }
+
+    cout << "Enter number of processes: ";
+    cin >> np;
+
+    int processSize[np];
+    cout << "Enter sizes of processes:\n";
+    for (int i = 0; i < np; i++) {
+        cin >> processSize[i];
+    }
+
+    int allocation[np];
+    for (int i = 0; i < np; i++)
+        allocation[i] = -1;
+
+    // First Fit Allocation
+    for (int i = 0; i < np; i++) {
+        for (int j = 0; j < nb; j++) {
+            if (blockSize[j] >= processSize[i]) {
+                allocation[i] = j;
+                blockSize[j] = blockSize[j]-processSize[i];
+                break;
+            }
+        }
+    }
+
+    // Output
+    cout << "\nProcess No.\tProcess Size\tBlock No.\n";
+    for (int i = 0; i < np; i++) {
+        cout << i + 1 << "\t\t" << processSize[i] << "\t\t";
+        if (allocation[i] != -1)
+            cout << allocation[i] + 1;
+        else
+            cout << "Not Allocated";
+        cout << endl;
+    }
+
+    return 0;
+}
+
+8. Write a program to simulate page replacement algorithm- FIFO, LRU.
+
+//FIFO
+
+
+#include <iostream>
+using namespace std;
+
+int main() {
+    int pages[50], frames[10];
+    int n, f, i, j, k, flag;
+    int hit = 0, miss = 0, index = 0;
+
+    cout << "Enter number of pages: ";
+    cin >> n;
+
+    cout << "Enter page reference string: ";
+    for(i = 0; i < n; i++) {
+        cin >> pages[i];
+    }
+
+    cout << "Enter number of frames: ";
+    cin >> f;
+
+    // Initialize frames with -1
+    for(i = 0; i < f; i++) {
+        frames[i] = -1;
+    }
+
+    cout << "\nPage\tFrames\n";
+
+    for(i = 0; i < n; i++) {
+        flag = 0;
+
+        // Check for hit
+        for(j = 0; j < f; j++) {
+            if(frames[j] == pages[i]) {
+                hit++;
+                flag = 1;
+                break;
+            }
+        }
+
+        // If miss, replace using FIFO
+        if(flag == 0) {
+            frames[index] = pages[i];
+            index = (index + 1) % f;
+            miss++;
+        }
+
+        // Display frames
+        cout << pages[i] << "\t";
+        for(k = 0; k < f; k++) {
+            if(frames[k] != -1)
+                cout << frames[k] << " ";
+            else
+                cout << "- ";
+        }
+        cout << endl;
+    }
+
+    cout << "\nTotal Hits = " << hit;
+    cout << "\nTotal Misses = " << miss;
+
+    float hit_ratio = (float)hit / n;
+    float miss_ratio = (float)miss / n;
+
+    cout << "\nHit Ratio = " << hit_ratio;
+    cout << "\nMiss Ratio = " << miss_ratio;
+
+    return 0;
+}
+
+//LRU
+
+#include <iostream>
+using namespace std;
+
+int main() {
+    int pages[50], frames[10], time[10];
+    int n, f, i, j, k, flag, pos;
+    int counter = 0, hit = 0, miss = 0;
+
+    cout << "Enter number of pages: ";
+    cin >> n;
+
+    cout << "Enter page reference string: ";
+    for(i = 0; i < n; i++) {
+        cin >> pages[i];
+    }
+
+    cout << "Enter number of frames: ";
+    cin >> f;
+
+    // Initialize frames
+    for(i = 0; i < f; i++) {
+        frames[i] = -1;
+        time[i] = 0;
+    }
+
+    cout << "\nPage\tFrames\n";
+
+    for(i = 0; i < n; i++) {
+        flag = 0;
+
+        // Check for hit
+        for(j = 0; j < f; j++) {
+            if(frames[j] == pages[i]) {
+                counter++;
+                time[j] = counter;  // update recent use
+                hit++;
+                flag = 1;
+                break;
+            }
+        }
+
+        // If miss
+        if(flag == 0) {
+            miss++;
+
+            // Find least recently used page
+            int min = time[0];
+            pos = 0;
+
+            for(j = 1; j < f; j++) {
+                if(time[j] < min) {
+                    min = time[j];
+                    pos = j;
+                }
+            }
+
+            counter++;
+            frames[pos] = pages[i];
+            time[pos] = counter;
+        }
+
+        // Display frames
+        cout << pages[i] << "\t";
+        for(k = 0; k < f; k++) {
+            if(frames[k] != -1)
+                cout << frames[k] << " ";
+            else
+                cout << "- ";
+        }
+        cout << endl;
+    }
+
+    cout << "\nTotal Hits = " << hit;
+    cout << "\nTotal Misses = " << miss;
+
+    float hit_ratio = (float)hit / n;
+    float miss_ratio = (float)miss / n;
+
+    cout << "\nHit Ratio = " << hit_ratio;
+    cout << "\nMiss Ratio = " << miss_ratio;
+
+    return 0;
+}
